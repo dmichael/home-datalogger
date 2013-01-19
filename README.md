@@ -1,4 +1,6 @@
-current-cost
+Current Cost CC128
 ============
 
-Hacking the Current Cost CC128 Display Unit
+This project contains notes and code for hacking the Current Cost CC128 Display Unit.
+
+
