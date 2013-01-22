@@ -1,13 +1,10 @@
 task :setup => :environment do 
 
-  ActiveRecord::Base.establish_connection(
-  	:adapter => "mysql2",  
-  	:host => "hobbying.ciqfyhrt5eh2.us-east-1.rds.amazonaws.com",
-    :port => 3306,
-   	:database => "currentcost", 
-   	:username => "root", 
-   	:password => "password"  
-  )
+  
+  yaml = YAML.load(File.read("#{Rails.root}/config/database.yml"))
+  credentials = yaml['development']
+
+  ActiveRecord::Base.establish_connection credentials
 
 
   ActiveRecord::Migration.create_table :realtime_messages, :options => 'ENGINE=InnoDB DEFAULT CHARSET=utf8' do |t|
