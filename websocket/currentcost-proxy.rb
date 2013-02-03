@@ -24,6 +24,7 @@ thread = Thread.new {
   # TODO: Need to handle broken pipes
   while true do
     while (xml = @serial.gets) do
+      puts xml
       @channel.push xml
     end
   end 
@@ -48,7 +49,7 @@ EventMachine.run do
 
       # Message from the websocket server - send to client
       ws.onmessage { |msg|
-        # puts "<#{sid}>: #{msg}"
+        puts "<#{sid}>: #{msg}"
         @channel.push "<#{sid}>: #{msg}"
       }
 
