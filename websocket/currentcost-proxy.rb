@@ -39,6 +39,7 @@ EventMachine.run do
     ws.onopen do
       # subscribe to the channel that the serialport is pushing to
       sid = @channel.subscribe { |msg| 
+        puts msg
         ws.send msg 
       }
 
