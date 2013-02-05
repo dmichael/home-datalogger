@@ -32,6 +32,7 @@ thread = Thread.new {
   @serial.close
 }
 
+
 # Ye olde reactor loop
 EventMachine.run do
 
