@@ -3,8 +3,8 @@
 # to manage the data stream on a local machine.
 
 require 'eventmachine'
-require 'em-websocket'
 require 'serialport'
+
 
 # '/dev/tty.PL2303-00001014'
 
@@ -18,7 +18,7 @@ class SerialPortMonitor
 
   def initialize(dev, baud = 57600, databits = 8, stopbits = 1, parity = SerialPort::NONE)
     @channel ||= EM::Channel.new
-    #@serial  = SerialPort.new(dev, baud, databits, stopbits, parity)
+    @serial  = SerialPort.new(dev, baud, databits, stopbits, parity)
   end
 
   def subscribe &block
@@ -36,10 +36,9 @@ class SerialPortMonitor
   def run
     # TODO: Need to handle broken pipes
     while true do
-      #while (xml = @serial.gets) do
-        @channel.push "xml"
-        sleep 1
-      #end
+      while (xml = @serial.gets) do
+        @channel.push xml
+      end
     end 
   end
 
@@ -79,11 +78,11 @@ EventMachine.run do
 
   Thread.new {
     monitor.run
-    # @serial.close
+    monitor.close
   }
 
   puts "SerialPortProxy started at #{host}:#{port}"
 end
 
 # Cleanup - just in case the loop termination didnt get it 
-# @serial.close
+# monitor.close
