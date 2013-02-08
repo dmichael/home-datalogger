@@ -23,6 +23,7 @@ class SerialPortMonitor
   def run
     # TODO: Need to handle broken pipes
     while true do
+      # Important note here. The #gets method handles the reading all the chars written in a line for you
       while (xml = @serial.gets) do
         @channel.push xml
       end

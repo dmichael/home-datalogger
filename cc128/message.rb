@@ -1,12 +1,17 @@
 require 'crack'
+require 'hashie'
+
+# NB: The /r/n at the end of lines are part of the 'line' protocol 
+# and are NOT garbage. You should split these messages before creating
+# a Message instance
 
 module CC128
   class Message
-    attr_accessor :xml, :hash, :type
+    attr_accessor :xml, :type
 
     def initialize xml
       @type = :realtime
-      @xml  = sanitize xml
+      @xml  = xml # sanitize xml
       hash  = parse @xml
 
       # Catch parse errors ...
@@ -28,13 +33,13 @@ module CC128
     end
 
     def to_hash
-      @hash
+      Hashie::Mash.new(@hash)
     end
 
     # Strip out crap from the XML string
-    def sanitize xml
-      xml.gsub('\n','').gsub('\r','')
-    end
+    # def sanitize xml
+    #   xml.gsub('\n','').gsub('\r','')
+    # end
 
     # Turn the XML string into a Hash
     def parse xml
