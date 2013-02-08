@@ -7,3 +7,7 @@ The CC128 Display Unit outputs ASCII text over its serial port at **57600 baud, 
 
 ## Please see [the wiki](https://github.com/dmichael/current-cost/wiki/_pages) for notes
 
+# See some of the results of this project on Cosm
+
+https://cosm.com/feeds/103394
+
