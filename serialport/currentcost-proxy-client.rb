@@ -4,7 +4,7 @@ require 'cosm'
 require 'cosm-rb'
 require 'json'
 
-require File.join File.dirname(__FILE__), '/../cc128/message'
+require File.expand_path(File.dirname(__FILE__)+"/../cc128/message")
 
 # The CC128 sends messages formatted as a line protocol using \n and \r as message delimiters/
 # This is actually quite convenient for a client since we do not have to deal with buffers and whatnot 
