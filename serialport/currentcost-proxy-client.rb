@@ -3,8 +3,17 @@ require 'awesome_print'
 require 'cosm'
 require 'cosm-rb'
 require 'json'
+require 'twitter'
 
 require File.expand_path(File.dirname(__FILE__)+"/../cc128/message")
+require File.expand_path(File.dirname(__FILE__)+"/../lib/notifiers/twitter")
+
+
+
+#host = '71.183.45.85'
+# host = '0.0.0.0'
+Host = '192.168.1.9'
+Port = 8080
 
 # The CC128 sends messages formatted as a line protocol using \n and \r as message delimiters/
 # This is actually quite convenient for a client since we do not have to deal with buffers and whatnot 
@@ -44,11 +53,25 @@ end
 
 
 
+
+
+
+
 module CurrentCostClient
   include EM::Protocols::LineText2
 
   def post_init
-    @cosm = Storage::Cosm.new
+
+
+    @services = []
+    @services.push Storage::Cosm.new
+
+    @notifiers = []
+    @notifiers.push Notifier::Twitter.new
+
+    message = "connection-initialized|#{Host}:#{Port}|#{Time.now.to_i}"
+    puts "A connection has initialized"
+    @notifiers.each {|notifier| notifier.send(message) }
   end
   
   def receive_line line
@@ -56,18 +79,18 @@ module CurrentCostClient
     hash    = message.to_hash
 
     # Save the data point to Cosn
-    @cosm.save(hash)
+    @services.each {|service| service.save(hash) }
   end
 
   def unbind
+    message = "connection-terminated|#{Host}:#{Port}|#{Time.now.to_i}" 
+    @notifiers.each {|notifier| notifier.send(message) }
     puts "A connection has terminated"
   end
 
 end
 
-#host = '71.183.45.85'
-host = '0.0.0.0'
 
 EventMachine.run do
-  EventMachine.connect(host, 8080, CurrentCostClient)
+  EventMachine.connect(Host, Port, CurrentCostClient)
 end
