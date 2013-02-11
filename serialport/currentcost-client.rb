@@ -80,6 +80,7 @@ module CurrentCostClient
   def receive_line line
     message = CC128::Message.new line
     hash    = message.to_hash
+    puts hash
     return if hash.nil? or hash.empty?
 
     # Save the data point to Cosm
