@@ -4,9 +4,12 @@ require 'cosm'
 require 'cosm-rb'
 require 'json'
 require 'twitter'
+require 'logger'
 
-require File.expand_path(File.dirname(__FILE__)+"/../cc128/message")
-require File.expand_path(File.dirname(__FILE__)+"/../lib/notifiers/twitter")
+here = File.expand_path(File.dirname(__FILE__))
+
+require here+"/../cc128/message"
+require here+"/../lib/notifiers/twitter"
 
 
 
@@ -53,44 +56,50 @@ end
 
 
 
-
-
-
-
 module CurrentCostClient
   include EM::Protocols::LineText2
+  
+  def logger 
+    @logger ||= Logger.new(File.expand_path(File.dirname(__FILE__))+'/log.txt')
+  end
 
   def post_init
-
-
     @services = []
     @services.push Storage::Cosm.new
 
     @notifiers = []
-    @notifiers.push Notifier::Twitter.new
+    @notifiers.push Notifier::Twitter.new    
+  end
 
+  def connection_completed
     message = "connection-initialized|#{Host}:#{Port}|#{Time.now.to_i}"
-    puts "A connection has initialized"
+    logger.info "A connection has initialized"
     @notifiers.each {|notifier| notifier.send(message) }
   end
   
   def receive_line line
     message = CC128::Message.new line
     hash    = message.to_hash
+    return if hash.nil? or hash.empty?
 
-    # Save the data point to Cosn
+    # Save the data point to Cosm
     @services.each {|service| service.save(hash) }
   end
 
   def unbind
     message = "connection-terminated|#{Host}:#{Port}|#{Time.now.to_i}" 
     @notifiers.each {|notifier| notifier.send(message) }
-    puts "A connection has terminated"
+    logger.info "A connection has terminated - trying to reconnect"
+    reconnect(Host, Port)
   end
-
 end
 
 
 EventMachine.run do
-  EventMachine.connect(Host, Port, CurrentCostClient)
+  server = EventMachine.connect(Host, Port, CurrentCostClient)
+  
+  EventMachine.error_handler do |e|
+    server.logger.error "Error raised during event loop: #{e.message}"
+    server.logger.error(e.backtrace.join "\n")
+  end
 end
