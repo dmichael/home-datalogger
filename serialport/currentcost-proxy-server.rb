@@ -3,7 +3,8 @@ require File.join File.dirname(__FILE__), 'serialport-proxy'
 
 # '/dev/tty.PL2303-00001014'
 
-raise "Call with path to the serial port as first arg" unless dev = ARGV.shift
+# raise "Call with path to the serial port as first arg" unless dev = ARGV.shift
+dev = '/dev/ttyUSB0'
 
 # Configure the SerialPortProxy for the CurrentCost CC128
 options = {
