@@ -65,16 +65,22 @@ module CC128
       message["time"]     = Time.parse(message["time"])
       message["radio_id"] = message.delete("id").to_i
 
+      total_watts = 0
       # Format the channel watts
       if ch1 = message.delete("ch1")
         message["ch1_watts"] = ch1["watts"].to_i 
+        total_watts += message["ch1_watts"]
       end
       if ch2 = message.delete("ch2")
         message["ch2_watts"] = ch2["watts"].to_i
+        total_watts += message["ch2_watts"]
       end
       if ch3 = message.delete("ch3")
         message["ch3_watts"] = ch3["watts"].to_i 
+        total_watts += message["ch3_watts"]
       end
+
+      message["total_watts"] = total_watts
       
       message
     end

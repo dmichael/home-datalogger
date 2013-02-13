@@ -35,7 +35,7 @@ module Storage
     end
 
     def save(message)
-      watts      = message.ch1_watts
+      watts      = message.total_watts
       sensor_num = message.sensor_num
       # Just for documentation
       datastream_id = sensor_num
