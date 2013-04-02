@@ -13,6 +13,9 @@ require here+"/../lib/notifiers/twitter"
 
 
 
+
+
+
 #host = '71.183.45.85'
 # host = '0.0.0.0'
 Host = '192.168.1.9'
@@ -68,7 +71,7 @@ module CurrentCostClient
     @services.push Storage::Cosm.new
 
     @notifiers = []
-    @notifiers.push Notifier::Twitter.new    
+    # @notifiers.push Notifier::Twitter.new
   end
 
   def connection_completed
